@@ -1,5 +1,5 @@
 /*!
-  hey, [be]Lazy.js - v1.2.2 - 2014.05.04 
+  hey, [be]Lazy.js - v1.2.2 - 2014.05.04
   A lazy loading and multi-serving image script
   (c) Bjoern Klinggaard - @bklinggaard - http://dinbror.dk/blazy
 */
@@ -13,12 +13,12 @@
 	}
 })(function () {
 	'use strict';
-	
+
 	//vars
 	var source, options, winWidth, winHeight, images, count, isRetina, destroyed;
 	//throttle vars
 	var validateT, saveWinOffsetT;
-	
+
 	// constructor
 	function Blazy(settings) {
 		//IE7- fallback for missing querySelectorAll support
@@ -51,10 +51,10 @@
 		options.src = source 	= options.src		|| 'data-src';
 		isRetina		= window.devicePixelRatio > 1;
 		//throttle, ensures that we don't call the functions too often
-		validateT		= throttle(validate, 25); 
+		validateT		= throttle(validate, 25);
 		saveWinOffsetT		= throttle(saveWinOffset, 50);
 
-		saveWinOffset();		
+		saveWinOffset();
 		//handle multi-served image src
 		each(options.breakpoints, function(object){
 			if(object.width >= window.screen.width) {
@@ -62,11 +62,11 @@
 				return false;
 			}
 		});
-		
+
 		// start lazy load
-		initialize();	
+		initialize();
   	}
-	
+
 	/* public functions
 	************************************/
 	Blazy.prototype.revalidate = function() {
@@ -88,7 +88,7 @@
 		images.length = 0;
 		destroyed = true;
 	};
-	
+
 	/* private helper functions
 	************************************/
 	function initialize(){
@@ -107,9 +107,9 @@
 	 		bindEvent(window, 'scroll', validateT);
 		}
 		// And finally, we start to lazy load. Should bLazy ensure domready?
-		validate();	
+		validate();
 	}
-	
+
 	function validate() {
 		for(var i = 0; i<count; i++){
 			var image = images[i];
@@ -118,13 +118,13 @@
  				images.splice(i, 1);
  				count--;
  				i--;
- 			} 
+ 			}
  		}
 		if(count === 0) {
 			Blazy.prototype.destroy();
 		}
 	}
-	
+
 	function loadImage(ele){
 		// if element is visible
 		if(ele.offsetWidth > 0 && ele.offsetHeight > 0) {
@@ -141,11 +141,11 @@
 				img.onerror = function() {
 					if(options.error) options.error(ele, "invalid");
 					ele.className = ele.className + ' ' + options.errorClass;
-				}; 
+				};
 				img.onload = function() {
 					// Is element an image or should we add the src as a background image?
-			      		ele.nodeName.toLowerCase() === 'img' ? ele.src = src : ele.style.backgroundImage = 'url("' + src + '")';	
-					ele.className = ele.className + ' ' + options.successClass;	
+			      		ele.nodeName.toLowerCase() === 'img' ? ele.src = src : ele.style.backgroundImage = 'url("' + src + '")';
+					ele.className = ele.className + ' ' + options.successClass;
 					if(options.success) options.success(ele);
 				};
 				img.src = src; //preload image
@@ -155,15 +155,15 @@
 			}
 		}
 	 }
-			
+
 	function elementInView(ele) {
 		var rect = ele.getBoundingClientRect();
 		var bottomline = winHeight + options.offset;
-		
+
 	    return (
 		 // inside horizontal view
 		 rect.left >= 0
-		 && rect.right <= winWidth + options.offset	 
+		 && rect.right <= winWidth + options.offset
 		 && (
 		 // from top to bottom
 		 rect.top  >= 0
@@ -174,23 +174,23 @@
 			)
 		);
 	 }
-	 
+
 	 function isElementLoaded(ele) {
 		 return (' ' + ele.className + ' ').indexOf(' ' + options.successClass + ' ') !== -1;
 	 }
-	 
+
 	 function createImageArray(selector) {
  		var nodelist 	= document.querySelectorAll(selector);
  		count 			= nodelist.length;
  		//converting nodelist to array
  		for(var i = count; i--; images.unshift(nodelist[i])){}
 	 }
-	 
+
 	 function saveWinOffset(){
 		 winHeight = window.innerHeight || document.documentElement.clientHeight;
 		 winWidth = window.innerWidth || document.documentElement.clientWidth;
 	 }
-	 
+
 	 function bindEvent(ele, type, fn) {
 		 if (ele.attachEvent) {
          		ele.attachEvent && ele.attachEvent('on' + type, fn);
@@ -198,7 +198,7 @@
          	       ele.addEventListener(type, fn, false);
        		}
 	 }
-	 
+
 	 function unbindEvent(ele, type, fn) {
 		 if (ele.detachEvent) {
          		ele.detachEvent && ele.detachEvent('on' + type, fn);
@@ -206,14 +206,14 @@
          	       ele.removeEventListener(type, fn, false);
        		}
 	 }
-	 
+
 	 function each(object, fn){
  		if(object && fn) {
  			var l = object.length;
  			for(var i = 0; i<l && fn(object[i], i) !== false; i++){}
  		}
 	 }
-	 
+
 	 function throttle(fn, minDelay) {
      		 var lastCall = 0;
 		 return function() {
@@ -225,6 +225,6 @@
          		 fn.apply(images, arguments);
        		 };
 	 }
-  	
+
 	 return Blazy;
 });
